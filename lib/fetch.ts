@@ -9,9 +9,9 @@ export type ErrorMessage = {
 const base_url = "https://api-for-missions-and-railways.herokuapp.com";
 
 export type PostUserData = {
-  name: "string";
-  email: "string";
-  password: "string";
+  name: string;
+  email: string;
+  password: string;
 };
 
 export const postUser = async (
