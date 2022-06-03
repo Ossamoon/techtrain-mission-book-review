@@ -88,7 +88,37 @@ export const createUser = async (
 };
 
 //
-// * Get Book List With Authentication
+// * Get User Name (with Authentication)
+// [GET] `/users`
+//
+
+export type UserGetRequest = Token;
+
+export type UserGetResponse =
+  | { status: "success"; data: { name: string } }
+  | ({ status: "failed" } & ErrorMessage);
+
+export const getUser = async ({
+  token,
+}: UserGetRequest): Promise<UserGetResponse> => {
+  const url = base_url + "/users";
+
+  const response = await fetch(url, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    return response.json().then((data) => ({ status: "failed", ...data }));
+  }
+
+  return response.json().then((data) => ({ status: "success", data: data }));
+};
+
+//
+// * Get Book List (with Authentication)
 // [GET] `/books`
 //
 
@@ -98,18 +128,19 @@ export type BooksGetResponse =
   | { status: "success"; data: BookData[] }
   | ({ status: "failed" } & ErrorMessage);
 
-export const getBooks = async (
-  data: BooksGetRequest
-): Promise<BooksGetResponse> => {
+export const getBooks = async ({
+  token,
+  offset,
+}: BooksGetRequest): Promise<BooksGetResponse> => {
   const url =
-    data.offset === undefined
+    offset === undefined
       ? base_url + "/books"
-      : base_url + "/books?offset=" + String(data.offset);
+      : base_url + "/books?offset=" + String(offset);
 
   const response = await fetch(url, {
     method: "GET",
     headers: {
-      Authorization: `Bearer ${data.token}`,
+      Authorization: `Bearer ${token}`,
     },
   });
 
