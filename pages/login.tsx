@@ -1,11 +1,14 @@
+import type { NextPage } from "next";
 import type { SubmitHandler } from "react-hook-form";
-import type { PostSignInData } from "../lib/fetch";
+import type { SignInRequest } from "../lib/fetch";
 
 import Head from "next/head";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { signIn } from "../lib/fetch";
 import { InputForm } from "../components/inputForm";
 
-const getLabel = (item: keyof PostSignInData) => {
+const getLabel = (item: keyof SignInRequest) => {
   switch (item) {
     case "email":
       return "メールアドレス";
@@ -16,17 +19,50 @@ const getLabel = (item: keyof PostSignInData) => {
   }
 };
 
-export default function Login() {
+const Login: NextPage = () => {
+  const [result, setResult] = useState<{
+    status: "success" | "failed" | undefined;
+    message: string;
+  }>({ status: undefined, message: "" });
+
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<PostSignInData>();
+  } = useForm<SignInRequest>();
 
   const fields = ["email", "password"] as const;
 
-  const onSubmit: SubmitHandler<PostSignInData> = async (data) => {
-    console.log(data);
+  const onSubmit: SubmitHandler<SignInRequest> = async (data) => {
+    const response = await signIn(data);
+    console.log(response);
+    if (response.status === "failed") {
+      if (response.ErrorCode === 403) {
+        setResult({
+          status: "failed",
+          message: `パスワードが正しくありません。`,
+        });
+        return;
+      }
+      if (response.ErrorCode === 405) {
+        setResult({
+          status: "failed",
+          message: `サーバでエラーが発生しました。時間をおいてもう一度お試しください。`,
+        });
+        return;
+      }
+      setResult({
+        status: "failed",
+        message: `ログインに失敗しました。`,
+      });
+      return;
+    }
+
+    setResult({
+      status: "success",
+      message: "ログインに成功しました！",
+    });
+    console.log("token:", response.token);
     return;
   };
 
@@ -38,8 +74,17 @@ export default function Login() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <div className="w-screen h-screen bg-gray-100">
-        <div className="container max-w-lg mx-auto p-4 flex-cols">
+      <div className="w-screen h-screen p-8 bg-gray-100">
+        {result.status === "failed" ? (
+          <div className="px-4 py-2 rounded bg-red-300 text-gray-700 font-bold max-w-fit mx-auto">
+            {result.message}
+          </div>
+        ) : result.status === "success" ? (
+          <div className="px-4 py-2 rounded bg-green-300 text-gray-700 font-bold max-w-fit mx-auto">
+            {result.message}
+          </div>
+        ) : null}
+        <div className="container max-w-lg mx-auto flex-cols">
           <div className="text-center text-2xl text-gray-600 font-bold py-8">
             ログイン
           </div>
@@ -50,6 +95,7 @@ export default function Login() {
             <div className="space-y-4 w-80 mx-auto">
               {fields.map((field) => (
                 <InputForm
+                  key={field}
                   label={getLabel(field)}
                   type={field}
                   registers={register(field, { required: true })}
@@ -68,4 +114,6 @@ export default function Login() {
       </div>
     </>
   );
-}
+};
+
+export default Login;
