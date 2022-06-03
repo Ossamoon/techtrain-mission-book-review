@@ -7,7 +7,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useCookies } from "react-cookie";
-import { userCreate } from "../lib/fetch";
+import { createUser } from "../lib/fetch";
 import { InputForm } from "../components/inputForm";
 
 export type Input = UserCreateRequest & {
@@ -73,7 +73,7 @@ const Signup: NextPage = () => {
       return;
     }
 
-    const response = await userCreate(data);
+    const response = await createUser(data);
     console.log(response);
 
     if (response.status === "failed") {
