@@ -95,7 +95,7 @@ export const createUser = async (
 export type BooksGetRequest = Token & { offset: number | undefined };
 
 export type BooksGetResponse =
-  | ({ status: "success" } & BookData[])
+  | { status: "success"; data: BookData[] }
   | ({ status: "failed" } & ErrorMessage);
 
 export const getBooks = async (
@@ -117,5 +117,5 @@ export const getBooks = async (
     return response.json().then((data) => ({ status: "failed", ...data }));
   }
 
-  return response.json().then((data) => ({ status: "success", ...data }));
+  return response.json().then((data) => ({ status: "success", data: data }));
 };

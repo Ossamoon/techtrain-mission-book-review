@@ -112,49 +112,47 @@ const Signup: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <div className="min-w-screen min-h-screen p-12 bg-gray-100">
-        <div className="container max-w-lg mx-auto flex-cols space-y-12">
-          {result.status === "failed" ? (
-            <div className="px-4 py-2 rounded bg-red-300 text-gray-700 font-bold max-w-fit mx-auto">
-              {result.message}
-            </div>
-          ) : result.status === "success" ? (
-            <div className="px-4 py-2 rounded bg-green-300 text-gray-700 font-bold max-w-fit mx-auto">
-              {result.message}
-            </div>
-          ) : null}
-          <div className="text-2xl text-gray-600 font-bold max-w-fit mx-auto">
-            新規登録
+      <div className="min-w-screen min-h-screen px-8 py-16 bg-gray-100 space-y-12">
+        {result.status === "failed" ? (
+          <div className="px-4 py-2 rounded bg-red-300 text-gray-700 font-bold max-w-fit mx-auto">
+            {result.message}
           </div>
-          <form
-            onSubmit={handleSubmit(onSubmit)}
-            className="w-full bg-gray-200 py-12 rounded-2xl space-y-8"
-          >
-            <div className="space-y-4 w-80 mx-auto">
-              {fields.map((field) => (
-                <InputForm
-                  key={field}
-                  label={getLabel(field)}
-                  type={getType(field)}
-                  registers={register(field, { required: true })}
-                  error={errors[field]}
-                />
-              ))}
-            </div>
+        ) : result.status === "success" ? (
+          <div className="px-4 py-2 rounded bg-green-300 text-gray-700 font-bold max-w-fit mx-auto">
+            {result.message}
+          </div>
+        ) : null}
+        <div className="text-2xl text-gray-600 font-bold max-w-fit mx-auto">
+          新規登録
+        </div>
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="max-w-lg bg-gray-200 py-12 rounded-2xl space-y-8 mx-auto"
+        >
+          <div className="space-y-4 w-80 mx-auto">
+            {fields.map((field) => (
+              <InputForm
+                key={field}
+                label={getLabel(field)}
+                type={getType(field)}
+                registers={register(field, { required: true })}
+                error={errors[field]}
+              />
+            ))}
+          </div>
 
-            <input
-              type="submit"
-              value="登録"
-              className="cursor-pointer bg-blue-300 rounded-md px-4 py-2 text-gray-600 font-bold text-md block mx-auto"
-            />
-          </form>
-          <div className="max-w-fit mx-auto cursor-pointer">
-            <Link href="/login">
-              <a className="text-gray-600 hover:underline hover:text-gray-400">
-                ログイン
-              </a>
-            </Link>
-          </div>
+          <input
+            type="submit"
+            value="登録"
+            className="cursor-pointer bg-blue-300 rounded-md px-4 py-2 text-gray-600 font-bold text-md block mx-auto"
+          />
+        </form>
+        <div className="max-w-fit mx-auto cursor-pointer">
+          <Link href="/login">
+            <a className="text-gray-600 hover:underline hover:text-gray-400">
+              ログイン
+            </a>
+          </Link>
         </div>
       </div>
     </>
