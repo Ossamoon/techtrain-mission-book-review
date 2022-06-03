@@ -37,23 +37,27 @@ const getType = (item: keyof Input) => {
 };
 
 type Props = {
-  item: keyof Input;
+  field: keyof Input;
   register: UseFormRegister<Input>;
   error: FieldError | undefined;
 };
 
-export const InputForm: FC<Props> = ({ item, register, error }) => {
+export const InputForm: FC<Props> = ({ field, register, error }) => {
   return (
     <div>
       <label>
-        <div>{getLabel(item)}</div>
+        <div className="font-bold text-sm text-gray-600">
+          {getLabel(field)}
+          {error && (
+            <span className="text-red-400 ml-2">値を入力してください</span>
+          )}
+        </div>
         <input
-          {...(register(item), { required: true })}
-          type={getType(item)}
-          className="w-48 border"
+          {...register(field, { required: true })}
+          type={getType(field)}
+          className="w-full px-1 py-1 rounded text-gray-800"
         />
       </label>
-      {error && <span>必須項目です</span>}
     </div>
   );
 };
