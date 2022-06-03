@@ -8,14 +8,14 @@ export type ErrorMessage = {
 
 const base_url = "https://api-for-missions-and-railways.herokuapp.com";
 
-export type PostUserData = {
+export type PostSignUpData = {
   name: string;
   email: string;
   password: string;
 };
 
-export const postUser = async (
-  data: PostUserData
+export const postSignUp = async (
+  data: PostSignUpData
 ): Promise<Token | ErrorMessage> => {
   const url = base_url + "/users";
   const response = await fetch(url, {
@@ -26,4 +26,9 @@ export const postUser = async (
     body: JSON.stringify(data),
   });
   return response.json();
+};
+
+export type PostSignInData = {
+  email: string;
+  password: string;
 };

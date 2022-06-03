@@ -1,14 +1,48 @@
 import type { NextPage } from "next";
 import type { SubmitHandler } from "react-hook-form";
-import type { PostUserData } from "../lib/fetch";
+import type { PostSignUpData } from "../lib/fetch";
 
 import Head from "next/head";
 import { useForm } from "react-hook-form";
-import { postUser } from "../lib/fetch";
+import { postSignUp } from "../lib/fetch";
 import { InputForm } from "../components/inputForm";
 
-export type Input = PostUserData & {
+export type Input = PostSignUpData & {
   re_password: string;
+};
+
+const getLabel = (item: keyof Input) => {
+  switch (item) {
+    case "name":
+      return "名前";
+      break;
+    case "email":
+      return "メールアドレス";
+      break;
+    case "password":
+      return "パスワード";
+      break;
+    case "re_password":
+      return "パスワード（再入力）";
+      break;
+  }
+};
+
+const getType = (item: keyof Input) => {
+  switch (item) {
+    case "name":
+      return "text";
+      break;
+    case "email":
+      return "email";
+      break;
+    case "password":
+      return "password";
+      break;
+    case "re_password":
+      return "password";
+      break;
+  }
 };
 
 const Signup: NextPage = () => {
@@ -18,13 +52,15 @@ const Signup: NextPage = () => {
     formState: { errors },
   } = useForm<Input>();
 
+  const fields = ["name", "email", "password", "re_password"] as const;
+
   const onSubmit: SubmitHandler<Input> = async (data) => {
     if (data.password !== data.re_password) {
       console.error("パスワードの不一致");
       return;
     }
 
-    const response = await postUser(data);
+    const response = await postSignUp(data);
     console.log(response);
     return;
   };
@@ -47,22 +83,14 @@ const Signup: NextPage = () => {
             className="w-full bg-gray-200 py-12 rounded-2xl space-y-8"
           >
             <div className="space-y-4 w-80 mx-auto">
-              <InputForm field="name" register={register} error={errors.name} />
-              <InputForm
-                field="email"
-                register={register}
-                error={errors.email}
-              />
-              <InputForm
-                field="password"
-                register={register}
-                error={errors.password}
-              />
-              <InputForm
-                field="re_password"
-                register={register}
-                error={errors.re_password}
-              />
+              {fields.map((field) => (
+                <InputForm
+                  label={getLabel(field)}
+                  type={getType(field)}
+                  registers={register(field, { required: true })}
+                  error={errors[field]}
+                />
+              ))}
             </div>
 
             <input
