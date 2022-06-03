@@ -74,7 +74,7 @@ const Login: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <div className="w-screen h-screen p-8 bg-gray-100">
+      <div className="w-screen h-screen p-12 bg-gray-100">
         {result.status === "failed" ? (
           <div className="px-4 py-2 rounded bg-red-300 text-gray-700 font-bold max-w-fit mx-auto">
             {result.message}
@@ -84,8 +84,8 @@ const Login: NextPage = () => {
             {result.message}
           </div>
         ) : null}
-        <div className="container max-w-lg mx-auto flex-cols">
-          <div className="text-center text-2xl text-gray-600 font-bold py-8">
+        <div className="container max-w-lg mx-auto flex-cols space-y-12">
+          <div className="text-center text-2xl text-gray-600 font-bold">
             ログイン
           </div>
           <form

@@ -3,6 +3,7 @@ import type { SubmitHandler } from "react-hook-form";
 import type { UserCreateRequest } from "../lib/fetch";
 
 import Head from "next/head";
+import Link from "next/link";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { userCreate } from "../lib/fetch";
@@ -103,7 +104,7 @@ const Signup: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <div className="w-screen h-screen p-8 bg-gray-100">
+      <div className="w-screen h-screen p-12 bg-gray-100">
         {result.status === "failed" ? (
           <div className="px-4 py-2 rounded bg-red-300 text-gray-700 font-bold max-w-fit mx-auto">
             {result.message}
@@ -114,8 +115,8 @@ const Signup: NextPage = () => {
           </div>
         ) : null}
 
-        <div className="container max-w-lg mx-auto flex-cols">
-          <div className="text-center text-2xl text-gray-600 font-bold py-8">
+        <div className="container max-w-lg mx-auto flex-cols space-y-12">
+          <div className="text-2xl text-gray-600 font-bold max-w-fit mx-auto">
             新規登録
           </div>
           <form
@@ -140,6 +141,13 @@ const Signup: NextPage = () => {
               className="cursor-pointer bg-blue-300 rounded-md px-4 py-2 text-gray-600 font-bold text-md block mx-auto"
             />
           </form>
+          <div className="max-w-fit mx-auto cursor-pointer">
+            <Link href="/login">
+              <a className="text-gray-600 hover:underline hover:text-gray-400">
+                ログイン
+              </a>
+            </Link>
+          </div>
         </div>
       </div>
     </>
