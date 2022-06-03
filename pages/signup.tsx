@@ -6,6 +6,7 @@ import Head from "next/head";
 import Link from "next/link";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { useCookies } from "react-cookie";
 import { userCreate } from "../lib/fetch";
 import { InputForm } from "../components/inputForm";
 
@@ -53,6 +54,8 @@ const Signup: NextPage = () => {
     message: string;
   }>({ status: undefined, message: "" });
 
+  const [_, setCookie] = useCookies(["token"]);
+
   const {
     register,
     handleSubmit,
@@ -92,7 +95,12 @@ const Signup: NextPage = () => {
       status: "success",
       message: "新規アカウントを登録しました！",
     });
-    console.log("token:", response.token);
+    setCookie("token", response.token, {
+      path: "/",
+      maxAge: 60 * 60 * 24 * 365,
+      secure: true,
+      sameSite: true,
+    });
     return;
   };
 
@@ -104,18 +112,17 @@ const Signup: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <div className="w-screen h-screen p-12 bg-gray-100">
-        {result.status === "failed" ? (
-          <div className="px-4 py-2 rounded bg-red-300 text-gray-700 font-bold max-w-fit mx-auto">
-            {result.message}
-          </div>
-        ) : result.status === "success" ? (
-          <div className="px-4 py-2 rounded bg-green-300 text-gray-700 font-bold max-w-fit mx-auto">
-            {result.message}
-          </div>
-        ) : null}
-
+      <div className="min-w-screen min-h-screen p-12 bg-gray-100">
         <div className="container max-w-lg mx-auto flex-cols space-y-12">
+          {result.status === "failed" ? (
+            <div className="px-4 py-2 rounded bg-red-300 text-gray-700 font-bold max-w-fit mx-auto">
+              {result.message}
+            </div>
+          ) : result.status === "success" ? (
+            <div className="px-4 py-2 rounded bg-green-300 text-gray-700 font-bold max-w-fit mx-auto">
+              {result.message}
+            </div>
+          ) : null}
           <div className="text-2xl text-gray-600 font-bold max-w-fit mx-auto">
             新規登録
           </div>
