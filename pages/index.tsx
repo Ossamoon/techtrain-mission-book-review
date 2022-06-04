@@ -59,20 +59,28 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <div className="min-w-screen min-h-screen bg-gray-100 space-y-12">
-        <header className="w-full h-12 bg-gray-800 flex">
+      <div className="min-w-screen min-h-screen bg-gray-100 space-y-16">
+        <header className="w-full h-12 bg-gray-800 flex px-4 space-x-4">
           {userName !== "" ? (
-            <div className="text-md text-gray-50 max-w-fit my-auto mr-auto ml-4">
-              ようこそ、<span className="font-bold">{userName}</span>さん
-            </div>
-          ) : null}
-          {userName !== "" ? (
-            <div
-              onClick={logout}
-              className="text-md text-gray-50 hover:underline max-w-fit px-2 py-0.5 my-auto ml-auto mr-4 cursor-pointer"
-            >
-              ログアウト
-            </div>
+            <>
+              <div className="flex-none text-md text-gray-50 w-fit my-auto">
+                ようこそ、<span className="font-bold">{userName}</span>さん
+              </div>
+              <div className="flex-1 w-10"></div>
+              <div className="flex-none w-fit cursor-pointer my-auto">
+                <Link href="/profile">
+                  <a className="text-md text-gray-50 hover:underline">
+                    プロフィール設定
+                  </a>
+                </Link>
+              </div>
+              <div
+                onClick={logout}
+                className="flex-none text-md text-gray-50 hover:underline w-fit cursor-pointer my-auto"
+              >
+                ログアウト
+              </div>
+            </>
           ) : (
             <Link href="/login">
               <div className="border border-gray-50 rounded max-w-fit px-2 py-0.5 my-auto ml-auto mr-4 cursor-pointer">
@@ -84,13 +92,21 @@ export default function Home() {
         <div className="text-2xl text-gray-600 font-bold max-w-fit mx-auto">
           Reactで作る書籍レビューアプリ
         </div>
-        <div className="max-w-4xl bg-gray-200 py-12 rounded-2xl space-y-8 mx-auto">
-          {data.map((book) => (
-            <div key={book.id}>
-              {book.title} {book.detail}
-            </div>
-          ))}
+        <div className="mx-8">
+          <div className="max-w-4xl bg-gray-200 py-12 rounded-2xl space-y-4 mx-auto">
+            {data.map((book) => (
+              <div
+                key={book.id}
+                className="mx-8 hover:bg-gray-100 px-4 py-2 rounded-lg cursor-pointer"
+              >
+                {book.title} {book.detail}
+              </div>
+            ))}
+          </div>
         </div>
+        <footer className="w-full h-12 bg-gray-800 text-gray-200">
+          <div className="w-fit mx-auto my-4">ossamoon</div>
+        </footer>
       </div>
     </>
   );
