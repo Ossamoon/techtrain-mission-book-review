@@ -4,6 +4,7 @@ import type { UserCreateRequest } from "../lib/fetch";
 
 import Head from "next/head";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useCookies } from "react-cookie";
@@ -64,6 +65,8 @@ const Signup: NextPage = () => {
 
   const fields = ["name", "email", "password", "re_password"] as const;
 
+  const router = useRouter();
+
   const onSubmit: SubmitHandler<Input> = async (data) => {
     if (data.password !== data.re_password) {
       setResult({
@@ -91,17 +94,13 @@ const Signup: NextPage = () => {
       return;
     }
 
-    setResult({
-      status: "success",
-      message: "新規アカウントを登録しました！",
-    });
     setCookie("token", response.token, {
       path: "/",
       maxAge: 60 * 60 * 24 * 365,
       secure: true,
       sameSite: true,
     });
-    return;
+    router.push("/");
   };
 
   return (

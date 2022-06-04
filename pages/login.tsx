@@ -3,6 +3,7 @@ import type { SubmitHandler } from "react-hook-form";
 import type { SignInRequest } from "../lib/fetch";
 
 import Head from "next/head";
+import { useRouter } from "next/router";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useCookies } from "react-cookie";
@@ -36,6 +37,8 @@ const Login: NextPage = () => {
 
   const fields = ["email", "password"] as const;
 
+  const router = useRouter();
+
   const onSubmit: SubmitHandler<SignInRequest> = async (data) => {
     const response = await signIn(data);
     console.log(response);
@@ -61,17 +64,13 @@ const Login: NextPage = () => {
       return;
     }
 
-    setResult({
-      status: "success",
-      message: "ログインに成功しました！",
-    });
     setCookie("token", response.token, {
       path: "/",
       maxAge: 60 * 60 * 24 * 365,
       secure: true,
       sameSite: true,
     });
-    return;
+    router.push("/");
   };
 
   return (
@@ -113,7 +112,7 @@ const Login: NextPage = () => {
 
           <input
             type="submit"
-            value="登録"
+            value="ログイン"
             className="cursor-pointer bg-blue-300 rounded-md px-4 py-2 text-gray-600 font-bold text-md block mx-auto"
           />
         </form>
