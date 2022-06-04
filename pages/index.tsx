@@ -2,6 +2,7 @@ import type { BookData } from "../lib/fetch";
 
 import Head from "next/head";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { useState, useEffect, useRef } from "react";
 import { useCookies } from "react-cookie";
 import { getBooks, getUser } from "../lib/fetch";
@@ -11,6 +12,8 @@ export default function Home() {
   const [userName, setUserName] = useState<string>("");
   const [cookies, _, removeCookie] = useCookies(["token"]);
   const offset = useRef<number>(0);
+
+  const router = useRouter();
 
   useEffect(() => {
     // Get book data
@@ -37,15 +40,23 @@ export default function Home() {
         console.error(response.ErrorMessageEN);
         return;
       }
-      setUserName(response.data.name);
+      setUserName(response.name);
       return;
     };
     fn();
   }, []);
 
+  useEffect(() => {
+    // Redirect if viewer do not have token
+    if (!cookies.token) {
+      router.replace("/login");
+    }
+  }, []);
+
   const logout = () => {
     removeCookie("token");
-    setUserName("");
+    router.push("/login");
+    return;
   };
 
   return (

@@ -95,7 +95,7 @@ export const createUser = async (
 export type UserGetRequest = Token;
 
 export type UserGetResponse =
-  | { status: "success"; data: { name: string } }
+  | { status: "success"; name: string }
   | ({ status: "failed" } & ErrorMessage);
 
 export const getUser = async ({
@@ -114,7 +114,39 @@ export const getUser = async ({
     return response.json().then((data) => ({ status: "failed", ...data }));
   }
 
-  return response.json().then((data) => ({ status: "success", data: data }));
+  return response.json().then((data) => ({ status: "success", ...data }));
+};
+
+//
+// * Put User Name (with Authentication)
+// [PUT] `/users`
+//
+
+export type UserPutRequest = Token & { name: string };
+
+export type UserPutResponse =
+  | { status: "success"; name: string }
+  | ({ status: "failed" } & ErrorMessage);
+
+export const putUser = async ({
+  token,
+  name,
+}: UserPutRequest): Promise<UserPutResponse> => {
+  const url = base_url + "/users";
+  const response = await fetch(url, {
+    method: "PUT",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ name }),
+  });
+
+  if (!response.ok) {
+    return response.json().then((data) => ({ status: "failed", ...data }));
+  }
+
+  return response.json().then((data) => ({ status: "success", ...data }));
 };
 
 //
