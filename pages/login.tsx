@@ -1,16 +1,20 @@
 import type { NextPage } from "next";
 import type { SubmitHandler } from "react-hook-form";
-import type { SignInRequest } from "../lib/fetch";
 
 import Head from "next/head";
+import toast from "react-hot-toast";
 import { useRouter } from "next/router";
-import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useCookies } from "react-cookie";
 import { signIn } from "../lib/fetch";
 import { InputForm } from "../components/inputForm";
 
-const getLabel = (item: keyof SignInRequest) => {
+export type Input = {
+  email: string;
+  password: string;
+};
+
+const getLabel = (item: keyof Input) => {
   switch (item) {
     case "email":
       return "メールアドレス";
@@ -22,55 +26,36 @@ const getLabel = (item: keyof SignInRequest) => {
 };
 
 const Login: NextPage = () => {
-  const [result, setResult] = useState<{
-    status: "success" | "failed" | undefined;
-    message: string;
-  }>({ status: undefined, message: "" });
-
   const [_, setCookie] = useCookies(["token"]);
 
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<SignInRequest>();
+  } = useForm<Input>();
 
   const fields = ["email", "password"] as const;
 
   const router = useRouter();
 
-  const onSubmit: SubmitHandler<SignInRequest> = async (data) => {
-    const response = await signIn(data);
-    console.log(response);
-    if (response.status === "failed") {
-      if (response.ErrorCode === 403) {
-        setResult({
-          status: "failed",
-          message: `パスワードが正しくありません。`,
+  const onSubmit: SubmitHandler<Input> = async (data) => {
+    toast.promise(signIn(data), {
+      loading: "Loading",
+      success: (res) => {
+        setCookie("token", res.token, {
+          path: "/",
+          maxAge: 60 * 60 * 24 * 365,
+          secure: true,
+          sameSite: true,
         });
-        return;
-      }
-      if (response.ErrorCode === 405) {
-        setResult({
-          status: "failed",
-          message: `サーバでエラーが発生しました。時間をおいてもう一度お試しください。`,
-        });
-        return;
-      }
-      setResult({
-        status: "failed",
-        message: `ログインに失敗しました。`,
-      });
-      return;
-    }
-
-    setCookie("token", response.token, {
-      path: "/",
-      maxAge: 60 * 60 * 24 * 365,
-      secure: true,
-      sameSite: true,
+        router.push("/");
+        return `ログインしました`;
+      },
+      error: (err) => {
+        console.error(err);
+        return `ログインに失敗しました`;
+      },
     });
-    router.push("/");
   };
 
   return (
@@ -82,15 +67,6 @@ const Login: NextPage = () => {
       </Head>
 
       <div className="min-w-screen min-h-screen px-8 py-16 bg-gray-100 space-y-12">
-        {result.status === "failed" ? (
-          <div className="px-4 py-2 rounded bg-red-300 text-gray-700 font-bold max-w-fit mx-auto">
-            {result.message}
-          </div>
-        ) : result.status === "success" ? (
-          <div className="px-4 py-2 rounded bg-green-300 text-gray-700 font-bold max-w-fit mx-auto">
-            {result.message}
-          </div>
-        ) : null}
         <div className="text-center text-2xl text-gray-600 font-bold">
           ログイン
         </div>

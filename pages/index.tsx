@@ -2,6 +2,7 @@ import type { BookData } from "../lib/fetch";
 
 import Head from "next/head";
 import Link from "next/link";
+import toast from "react-hot-toast";
 import { useRouter } from "next/router";
 import { useState, useEffect, useRef } from "react";
 import { useCookies } from "react-cookie";
@@ -16,45 +17,33 @@ export default function Home() {
   const router = useRouter();
 
   useEffect(() => {
-    // Get book data
-    const fn = async () => {
-      const response = await getBooks({
-        token: cookies.token,
-        offset: undefined,
-      });
-      if (response.status === "failed") {
-        console.error(response.ErrorMessageEN);
-        return;
-      }
-      setData(response.data);
-      return;
-    };
-    fn();
-  }, []);
-
-  useEffect(() => {
-    // Get user name
-    const fn = async () => {
-      const response = await getUser({ token: cookies.token });
-      if (response.status === "failed") {
-        console.error(response.ErrorMessageEN);
-        return;
-      }
-      setUserName(response.name);
-      return;
-    };
-    fn();
-  }, []);
-
-  useEffect(() => {
     // Redirect if viewer do not have token
     if (!cookies.token) {
       router.replace("/login");
+      return;
     }
+    // Get user name
+    getUser(cookies.token)
+      .then((data) => {
+        setUserName(data.name);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+
+    // Get book data
+    getBooks(cookies.token, undefined)
+      .then((data) => {
+        setData(data);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
   }, []);
 
   const logout = () => {
     removeCookie("token");
+    toast("ログアウトしました");
     router.push("/login");
     return;
   };

@@ -1,17 +1,19 @@
 import type { NextPage } from "next";
 import type { SubmitHandler } from "react-hook-form";
-import type { UserCreateRequest } from "../lib/fetch";
 
 import Head from "next/head";
 import Link from "next/link";
+import toast from "react-hot-toast";
 import { useRouter } from "next/router";
-import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useCookies } from "react-cookie";
 import { createUser } from "../lib/fetch";
 import { InputForm } from "../components/inputForm";
 
-export type Input = UserCreateRequest & {
+export type Input = {
+  name: string;
+  email: string;
+  password: string;
   re_password: string;
 };
 
@@ -50,11 +52,6 @@ const getType = (item: keyof Input): string => {
 };
 
 const Signup: NextPage = () => {
-  const [result, setResult] = useState<{
-    status: "success" | "failed" | undefined;
-    message: string;
-  }>({ status: undefined, message: "" });
-
   const [_, setCookie] = useCookies(["token"]);
 
   const {
@@ -69,38 +66,27 @@ const Signup: NextPage = () => {
 
   const onSubmit: SubmitHandler<Input> = async (data) => {
     if (data.password !== data.re_password) {
-      setResult({
-        status: "failed",
-        message: "パスワードが一致していません。",
-      });
+      toast.error("パスワードが一致していません");
       return;
     }
 
-    const response = await createUser(data);
-    console.log(response);
-
-    if (response.status === "failed") {
-      if (response.ErrorCode === 405) {
-        setResult({
-          status: "failed",
-          message: `サーバでエラーが発生しました。時間をおいてもう一度お試しください。`,
+    toast.promise(createUser(data), {
+      loading: "Loading",
+      success: (res) => {
+        setCookie("token", res.token, {
+          path: "/",
+          maxAge: 60 * 60 * 24 * 365,
+          secure: true,
+          sameSite: true,
         });
-        return;
-      }
-      setResult({
-        status: "failed",
-        message: `アカウント作成に失敗しました。`,
-      });
-      return;
-    }
-
-    setCookie("token", response.token, {
-      path: "/",
-      maxAge: 60 * 60 * 24 * 365,
-      secure: true,
-      sameSite: true,
+        router.push("/");
+        return `${data.name}さんのアカウントを作成しました`;
+      },
+      error: (err) => {
+        console.error(err);
+        return `アカウント作成に失敗しました`;
+      },
     });
-    router.push("/");
   };
 
   return (
@@ -112,15 +98,6 @@ const Signup: NextPage = () => {
       </Head>
 
       <div className="min-w-screen min-h-screen px-8 py-16 bg-gray-100 space-y-12">
-        {result.status === "failed" ? (
-          <div className="px-4 py-2 rounded bg-red-300 text-gray-700 font-bold max-w-fit mx-auto">
-            {result.message}
-          </div>
-        ) : result.status === "success" ? (
-          <div className="px-4 py-2 rounded bg-green-300 text-gray-700 font-bold max-w-fit mx-auto">
-            {result.message}
-          </div>
-        ) : null}
         <div className="text-2xl text-gray-600 font-bold max-w-fit mx-auto">
           新規登録
         </div>

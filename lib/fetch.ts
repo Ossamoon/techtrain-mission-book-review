@@ -1,7 +1,3 @@
-export type Token = {
-  token: string;
-};
-
 export type BookData = {
   id: string;
   title: string;
@@ -25,16 +21,12 @@ const base_url = "https://api-for-missions-and-railways.herokuapp.com";
 // [POST] `/signin`
 //
 
-export type SignInRequest = {
+export type SignIn = (data: {
   email: string;
   password: string;
-};
+}) => Promise<{ token: string }>;
 
-export type SignInResponse =
-  | ({ status: "success" } & Token)
-  | ({ status: "failed" } & ErrorMessage);
-
-export const signIn = async (data: SignInRequest): Promise<SignInResponse> => {
+export const signIn: SignIn = async (data) => {
   const url = base_url + "/signin";
 
   const response = await fetch(url, {
@@ -43,13 +35,14 @@ export const signIn = async (data: SignInRequest): Promise<SignInResponse> => {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(data),
-  });
+  })
+    .then((res) => res.json())
+    .catch((err: ErrorMessage) => {
+      console.error(err);
+      throw err;
+    });
 
-  if (!response.ok) {
-    return response.json().then((data) => ({ status: "failed", ...data }));
-  }
-
-  return response.json().then((data) => ({ status: "success", ...data }));
+  return response;
 };
 
 //
@@ -57,19 +50,15 @@ export const signIn = async (data: SignInRequest): Promise<SignInResponse> => {
 // [POST] `/users`
 //
 
-export type UserCreateRequest = {
+export type CreateUser = (data: {
   name: string;
   email: string;
   password: string;
-};
+}) => Promise<{
+  token: string;
+}>;
 
-export type UserCreateResponse =
-  | ({ status: "success" } & Token)
-  | ({ status: "failed" } & ErrorMessage);
-
-export const createUser = async (
-  data: UserCreateRequest
-): Promise<UserCreateResponse> => {
+export const createUser: CreateUser = async (data) => {
   const url = base_url + "/users";
 
   const response = await fetch(url, {
@@ -78,13 +67,14 @@ export const createUser = async (
       "Content-Type": "application/json",
     },
     body: JSON.stringify(data),
-  });
+  })
+    .then((res) => res.json())
+    .catch((err: ErrorMessage) => {
+      console.error(err);
+      throw err;
+    });
 
-  if (!response.ok) {
-    return response.json().then((data) => ({ status: "failed", ...data }));
-  }
-
-  return response.json().then((data) => ({ status: "success", ...data }));
+  return response;
 };
 
 //
@@ -92,15 +82,9 @@ export const createUser = async (
 // [GET] `/users`
 //
 
-export type UserGetRequest = Token;
+export type GetUser = (token: string) => Promise<{ name: string }>;
 
-export type UserGetResponse =
-  | { status: "success"; name: string }
-  | ({ status: "failed" } & ErrorMessage);
-
-export const getUser = async ({
-  token,
-}: UserGetRequest): Promise<UserGetResponse> => {
+export const getUser: GetUser = async (token) => {
   const url = base_url + "/users";
 
   const response = await fetch(url, {
@@ -108,13 +92,14 @@ export const getUser = async ({
     headers: {
       Authorization: `Bearer ${token}`,
     },
-  });
+  })
+    .then((res) => res.json())
+    .catch((err: ErrorMessage) => {
+      console.error(err);
+      throw err;
+    });
 
-  if (!response.ok) {
-    return response.json().then((data) => ({ status: "failed", ...data }));
-  }
-
-  return response.json().then((data) => ({ status: "success", ...data }));
+  return response;
 };
 
 //
@@ -122,16 +107,12 @@ export const getUser = async ({
 // [PUT] `/users`
 //
 
-export type UserPutRequest = Token & { name: string };
+export type PutUser = (
+  token: string,
+  data: { name: string }
+) => Promise<{ name: string }>;
 
-export type UserPutResponse =
-  | { status: "success"; name: string }
-  | ({ status: "failed" } & ErrorMessage);
-
-export const putUser = async ({
-  token,
-  name,
-}: UserPutRequest): Promise<UserPutResponse> => {
+export const putUser: PutUser = async (token, { name }) => {
   const url = base_url + "/users";
   const response = await fetch(url, {
     method: "PUT",
@@ -140,13 +121,14 @@ export const putUser = async ({
       "Content-Type": "application/json",
     },
     body: JSON.stringify({ name }),
-  });
+  })
+    .then((res) => res.json())
+    .catch((err: ErrorMessage) => {
+      console.error(err);
+      throw err;
+    });
 
-  if (!response.ok) {
-    return response.json().then((data) => ({ status: "failed", ...data }));
-  }
-
-  return response.json().then((data) => ({ status: "success", ...data }));
+  return response;
 };
 
 //
@@ -154,16 +136,12 @@ export const putUser = async ({
 // [GET] `/books`
 //
 
-export type BooksGetRequest = Token & { offset: number | undefined };
+export type GetBooks = (
+  token: string,
+  offset: number | undefined
+) => Promise<BookData[]>;
 
-export type BooksGetResponse =
-  | { status: "success"; data: BookData[] }
-  | ({ status: "failed" } & ErrorMessage);
-
-export const getBooks = async ({
-  token,
-  offset,
-}: BooksGetRequest): Promise<BooksGetResponse> => {
+export const getBooks: GetBooks = async (token, offset) => {
   const url =
     offset === undefined
       ? base_url + "/books"
@@ -174,11 +152,12 @@ export const getBooks = async ({
     headers: {
       Authorization: `Bearer ${token}`,
     },
-  });
+  })
+    .then((res) => res.json())
+    .catch((err: ErrorMessage) => {
+      console.error(err);
+      throw err;
+    });
 
-  if (!response.ok) {
-    return response.json().then((data) => ({ status: "failed", ...data }));
-  }
-
-  return response.json().then((data) => ({ status: "success", data: data }));
+  return response;
 };
