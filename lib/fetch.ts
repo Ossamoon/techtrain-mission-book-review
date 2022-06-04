@@ -138,7 +138,7 @@ export type PutUser = (
   data: { name: string }
 ) => Promise<{ name: string }>;
 
-export const putUser: PutUser = async (token, { name }) => {
+export const putUser: PutUser = async (token, data) => {
   const url = base_url + "/users";
   const response = await fetch(url, {
     method: "PUT",
@@ -146,7 +146,7 @@ export const putUser: PutUser = async (token, { name }) => {
       Authorization: `Bearer ${token}`,
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ name }),
+    body: JSON.stringify(data),
   });
   const obj = await response.json();
 
@@ -205,4 +205,49 @@ export const getBooks: GetBooks = async (token, offset) => {
     throw new Error("サーバーでエラーが発生しました");
   }
   throw new Error("情報の取得に失敗しました");
+};
+
+//
+// * POST Book (with Authentication)
+// [POST] `/books`
+//
+
+export type PostBooks = (
+  token: string,
+  data: {
+    title: "string";
+    url: "string";
+    detail: "string";
+    review: "string";
+  }
+) => Promise<void>;
+
+export const postBooks: PostBooks = async (token, data) => {
+  const url = base_url + "/books";
+  const response = await fetch(url, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+  const obj = await response.json();
+
+  // Success
+  if (response.ok) {
+    return;
+  }
+  // Error
+  console.error(obj);
+  if (response.status === 400) {
+    throw new Error("有効でない値を検出しました");
+  }
+  if (response.status === 401) {
+    throw new Error("認証エラーが発生しました");
+  }
+  if (response.status === 500) {
+    throw new Error("サーバーでエラーが発生しました");
+  }
+  throw new Error("書籍レビューの登録に失敗しました");
 };

@@ -93,11 +93,18 @@ export default function Home() {
           Reactで作る書籍レビューアプリ
         </div>
         <div className="mx-8">
-          <div className="max-w-4xl bg-gray-200 py-12 rounded-2xl space-y-4 mx-auto">
+          <div className="max-w-4xl bg-gray-200 p-8 rounded-2xl space-y-4 mx-auto">
+            <Link href="/new">
+              <div className="cursor-pointer bg-blue-300 rounded-md px-4 py-2 shadow w-fit ml-auto">
+                <a className="text-gray-600 font-bold text-md">
+                  レビューを投稿
+                </a>
+              </div>
+            </Link>
             {data.map((book) => (
               <div
                 key={book.id}
-                className="mx-8 hover:bg-gray-100 px-4 py-2 rounded-lg cursor-pointer"
+                className="hover:bg-gray-100 px-4 py-2 rounded-lg cursor-pointer"
               >
                 {book.title} {book.detail}
               </div>
