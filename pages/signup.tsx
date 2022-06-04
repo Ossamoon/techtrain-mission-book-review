@@ -82,9 +82,9 @@ const Signup: NextPage = () => {
         router.push("/");
         return `${data.name}さんのアカウントを作成しました`;
       },
-      error: (err) => {
+      error: (err: Error) => {
         console.error(err);
-        return `アカウント作成に失敗しました`;
+        return err.message;
       },
     });
   };

@@ -104,8 +104,8 @@ export default function Home() {
             ))}
           </div>
         </div>
-        <footer className="w-full h-12 bg-gray-800 text-gray-200">
-          <div className="w-fit mx-auto my-4">ossamoon</div>
+        <footer className="w-full h-24 bg-gray-800 text-gray-200 pt-8">
+          <div className="w-fit mx-auto text-sm">developed by ossamoon</div>
         </footer>
       </div>
     </>

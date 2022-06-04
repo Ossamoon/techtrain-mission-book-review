@@ -28,21 +28,29 @@ export type SignIn = (data: {
 
 export const signIn: SignIn = async (data) => {
   const url = base_url + "/signin";
-
   const response = await fetch(url, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(data),
-  })
-    .then((res) => res.json())
-    .catch((err: ErrorMessage) => {
-      console.error(err);
-      throw err;
-    });
+  });
+  const obj = await response.json();
 
-  return response;
+  // Success
+  if (response.ok) {
+    return obj;
+  }
+
+  // Error
+  console.error(obj);
+  if (response.status === 400) {
+    throw new Error("有効でない値を検出しました");
+  }
+  if (response.status === 500) {
+    throw new Error("サーバーでエラーが発生しました");
+  }
+  throw new Error("ログインに失敗しました");
 };
 
 //
@@ -67,14 +75,23 @@ export const createUser: CreateUser = async (data) => {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(data),
-  })
-    .then((res) => res.json())
-    .catch((err: ErrorMessage) => {
-      console.error(err);
-      throw err;
-    });
+  });
+  const obj = await response.json();
 
-  return response;
+  // Success
+  if (response.ok) {
+    return obj;
+  }
+
+  // Error
+  console.error(obj);
+  if (response.status === 400) {
+    throw new Error("有効でない値を検出しました");
+  }
+  if (response.status === 500) {
+    throw new Error("サーバーでエラーが発生しました");
+  }
+  throw new Error("新規アカウントの作成に失敗しました");
 };
 
 //
@@ -92,14 +109,23 @@ export const getUser: GetUser = async (token) => {
     headers: {
       Authorization: `Bearer ${token}`,
     },
-  })
-    .then((res) => res.json())
-    .catch((err: ErrorMessage) => {
-      console.error(err);
-      throw err;
-    });
+  });
+  const obj = await response.json();
 
-  return response;
+  // Success
+  if (response.ok) {
+    return obj;
+  }
+
+  // Error
+  console.error(obj);
+  if (response.status === 401) {
+    throw new Error("認証エラーが発生しました");
+  }
+  if (response.status === 500) {
+    throw new Error("サーバーでエラーが発生しました");
+  }
+  throw new Error("ユーザーの取得に失敗しました");
 };
 
 //
@@ -121,14 +147,25 @@ export const putUser: PutUser = async (token, { name }) => {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({ name }),
-  })
-    .then((res) => res.json())
-    .catch((err: ErrorMessage) => {
-      console.error(err);
-      throw err;
-    });
+  });
+  const obj = await response.json();
 
-  return response;
+  // Success
+  if (response.ok) {
+    return obj;
+  }
+  // Error
+  console.error(obj);
+  if (response.status === 400) {
+    throw new Error("有効でない値を検出しました");
+  }
+  if (response.status === 401) {
+    throw new Error("認証エラーが発生しました");
+  }
+  if (response.status === 500) {
+    throw new Error("サーバーでエラーが発生しました");
+  }
+  throw new Error("ユーザー情報の更新に失敗しました");
 };
 
 //
@@ -152,12 +189,20 @@ export const getBooks: GetBooks = async (token, offset) => {
     headers: {
       Authorization: `Bearer ${token}`,
     },
-  })
-    .then((res) => res.json())
-    .catch((err: ErrorMessage) => {
-      console.error(err);
-      throw err;
-    });
+  });
+  const obj = await response.json();
 
-  return response;
+  // Success
+  if (response.ok) {
+    return obj;
+  }
+  // Error
+  console.error(obj);
+  if (response.status === 401) {
+    throw new Error("認証エラーが発生しました");
+  }
+  if (response.status === 500) {
+    throw new Error("サーバーでエラーが発生しました");
+  }
+  throw new Error("情報の取得に失敗しました");
 };

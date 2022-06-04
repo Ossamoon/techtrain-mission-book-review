@@ -52,9 +52,9 @@ const Login: NextPage = () => {
         router.push("/");
         return `ログインしました`;
       },
-      error: (err) => {
+      error: (err: Error) => {
         console.error(err);
-        return `ログインに失敗しました`;
+        return err.message;
       },
     });
   };

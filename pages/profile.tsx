@@ -32,12 +32,12 @@ const Profile: NextPage = () => {
   const onSubmit: SubmitHandler<Input> = async (data) => {
     toast.promise(putUser(cookies.token, data), {
       loading: "Loading",
-      success: (res) => {
+      success: () => {
         return `プロフィールの変更を適用しました`;
       },
-      error: (err) => {
+      error: (err: Error) => {
         console.error(err);
-        return `プロフィールの変更に失敗しました`;
+        return err.message;
       },
     });
   };
@@ -54,7 +54,7 @@ const Profile: NextPage = () => {
         initUserName.current = data.name;
         setValue("name", data.name);
       })
-      .catch((err) => {
+      .catch((err: Error) => {
         console.error(err);
       });
   }, []);
@@ -69,7 +69,7 @@ const Profile: NextPage = () => {
 
       <div className="min-w-screen min-h-screen px-8 py-16 bg-gray-100 space-y-12">
         <div className="text-center text-2xl text-gray-600 font-bold">
-          プロフィール
+          プロフィール設定
         </div>
         <form
           onSubmit={handleSubmit(onSubmit)}
