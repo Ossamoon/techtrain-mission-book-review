@@ -1,8 +1,7 @@
-import type { NextPage } from "next";
+import type { NextPage, GetServerSideProps } from "next";
 import type { SubmitHandler } from "react-hook-form";
 
 import Head from "next/head";
-import Link from "next/link";
 import toast from "react-hot-toast";
 import { useEffect, useRef } from "react";
 import { useRouter } from "next/router";
@@ -10,6 +9,8 @@ import { useForm } from "react-hook-form";
 import { useCookies } from "react-cookie";
 import { getUser, putUser } from "../lib/fetch";
 import { InputForm } from "../components/inputForm";
+import { Header } from "../components/header";
+import { Footer } from "../components/footer";
 
 export type Input = {
   name: string;
@@ -67,40 +68,53 @@ const Profile: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <div className="min-w-screen min-h-screen px-8 py-16 bg-gray-100 space-y-12">
-        <div className="text-center text-2xl text-gray-600 font-bold">
-          プロフィール設定
-        </div>
-        <form
-          onSubmit={handleSubmit(onSubmit)}
-          className="max-w-lg bg-gray-200 py-12 rounded-2xl space-y-8 mx-auto"
-        >
-          <div className="space-y-4 w-80 mx-auto">
-            <InputForm
-              key="name"
-              label="名前"
-              type="text"
-              registers={register("name", { required: true })}
-              error={errors.name}
-            />
+      <div className="min-w-screen min-h-screen bg-gray-100 space-y-16">
+        <Header />
+        <main className="space-y-16 px-8">
+          <div className="text-center text-2xl text-gray-600 font-bold">
+            プロフィール設定
           </div>
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="max-w-lg bg-gray-200 py-12 rounded-2xl space-y-8 mx-auto"
+          >
+            <div className="space-y-4 w-80 mx-auto">
+              <InputForm
+                key="name"
+                label="名前"
+                type="text"
+                registers={register("name", { required: true })}
+                error={errors.name}
+              />
+            </div>
 
-          <input
-            type="submit"
-            value="適用"
-            className="cursor-pointer bg-blue-300 rounded-md px-4 py-2 text-gray-600 font-bold text-md block mx-auto"
-          />
-        </form>
-        <div className="max-w-fit mx-auto cursor-pointer">
-          <Link href="/">
-            <a className="text-gray-600 hover:underline hover:text-gray-400">
-              ホームへ戻る
-            </a>
-          </Link>
-        </div>
+            <input
+              type="submit"
+              value="適用"
+              className="cursor-pointer bg-blue-300 rounded-md px-4 py-2 text-gray-600 font-bold text-md block mx-auto"
+            />
+          </form>
+        </main>
+        <Footer />
       </div>
     </>
   );
+};
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const token = context.req.cookies["token"];
+  if (!token) {
+    return {
+      redirect: {
+        permanent: false,
+        destination: "/login",
+      },
+    };
+  }
+
+  return {
+    props: {},
+  };
 };
 
 export default Profile;

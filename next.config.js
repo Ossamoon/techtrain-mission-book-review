@@ -25,18 +25,6 @@ module.exports = {
         ],
         permanent: false,
       },
-      {
-        source: "/new",
-        destination: "/",
-        has: [
-          {
-            type: "cookie",
-            key: "token",
-            value: undefined,
-          },
-        ],
-        permanent: false,
-      },
     ];
   },
 };

@@ -173,10 +173,7 @@ export const putUser: PutUser = async (token, data) => {
 // [GET] `/books`
 //
 
-export type GetBooks = (
-  token: string,
-  offset: number | undefined
-) => Promise<BookData[]>;
+export type GetBooks = (token: string, offset?: number) => Promise<BookData[]>;
 
 export const getBooks: GetBooks = async (token, offset) => {
   const url =
@@ -250,4 +247,40 @@ export const postBooks: PostBooks = async (token, data) => {
     throw new Error("サーバーでエラーが発生しました");
   }
   throw new Error("書籍レビューの登録に失敗しました");
+};
+
+//
+// * Get Book with ID (with Authentication)
+// [GET] `/books/{id}`
+//
+
+export type GetBook = (token: string, id: string) => Promise<BookData>;
+
+export const getBook: GetBook = async (token, id) => {
+  const url = base_url + "/books/" + id;
+
+  const response = await fetch(url, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  const obj = await response.json();
+
+  // Success
+  if (response.ok) {
+    return obj;
+  }
+  // Error
+  console.error(obj);
+  if (response.status === 401) {
+    throw new Error("認証エラーが発生しました");
+  }
+  if (response.status === 404) {
+    throw new Error("書籍レビューが存在しません");
+  }
+  if (response.status === 500) {
+    throw new Error("サーバーでエラーが発生しました");
+  }
+  throw new Error("情報の取得に失敗しました");
 };

@@ -1,6 +1,5 @@
 import type { FC } from "react";
 import type { FieldError, UseFormRegisterReturn } from "react-hook-form";
-import { Input } from "../pages/signup";
 
 type Props = {
   label: string;
