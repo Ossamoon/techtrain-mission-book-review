@@ -8,6 +8,7 @@ import { useRouter } from "next/router";
 import { getBook } from "../../lib/fetch";
 import { Header } from "../../components/header";
 import { Footer } from "../../components/footer";
+import { Main } from "../../components/main";
 
 type DataState =
   | { state: "success"; data: BookData }
@@ -43,34 +44,28 @@ const Detail: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <div className="min-w-screen min-h-screen bg-gray-100 space-y-16">
+      <div className="min-w-screen min-h-screen bg-gray-100">
         <Header />
-        <main className="space-y-16">
-          <h1 className="text-2xl text-gray-600 font-bold max-w-fit mx-auto">
-            {dataWithState.state === "loading"
-              ? "Loading..."
-              : dataWithState.state === "error"
-              ? "エラー"
-              : dataWithState.data.title}
-          </h1>
-          <div className="mx-8">
-            <div className="max-w-4xl bg-gray-200 p-8 rounded-2xl space-y-4 mx-auto">
-              {dataWithState.state === "loading" ? (
-                "Loading..."
-              ) : dataWithState.state === "error" ? (
-                dataWithState.message
-              ) : (
-                <>
-                  <div>{dataWithState.data.detail}</div>
-                  <div>{dataWithState.data.url}</div>
-                  <div>{dataWithState.data.review}</div>
-                  <div>{dataWithState.data.reviewer}</div>
-                  <div>{dataWithState.data.isMine}</div>
-                </>
-              )}
-            </div>
-          </div>
-        </main>
+        <Main
+          title={
+            dataWithState.state === "success" ? dataWithState.data?.title : ""
+          }
+          isLarge={true}
+        >
+          {dataWithState.state === "loading" ? (
+            "Loading..."
+          ) : dataWithState.state === "error" ? (
+            dataWithState.message
+          ) : (
+            <>
+              <div>{dataWithState.data.detail}</div>
+              <div>{dataWithState.data.url}</div>
+              <div>{dataWithState.data.review}</div>
+              <div>{dataWithState.data.reviewer}</div>
+              <div>{dataWithState.data.isMine}</div>
+            </>
+          )}
+        </Main>
         <Footer />
       </div>
     </>

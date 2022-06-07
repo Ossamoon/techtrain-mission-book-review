@@ -8,34 +8,23 @@ import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 import { useCookies } from "react-cookie";
 import { signIn } from "../lib/fetch";
-import { InputForm } from "../components/inputForm";
+import { Form } from "../components/form";
+import { Main } from "../components/main";
 
 export type Input = {
   email: string;
   password: string;
 };
-
-const getLabel = (item: keyof Input) => {
-  switch (item) {
-    case "email":
-      return "メールアドレス";
-      break;
-    case "password":
-      return "パスワード";
-      break;
-  }
-};
+const fieldNames = ["email", "password"] as const;
+const fields = [
+  { name: "email", label: "メールアドレス", type: "email" },
+  { name: "password", label: "パスワード", type: "password" },
+];
 
 const Login: NextPage = () => {
   const [_, setCookie] = useCookies(["token"]);
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<Input>();
-
-  const fields = ["email", "password"] as const;
+  const { register, handleSubmit } = useForm<Input>();
 
   const router = useRouter();
 
@@ -53,7 +42,6 @@ const Login: NextPage = () => {
         return `ログインしました`;
       },
       error: (err: Error) => {
-        console.error(err);
         return err.message;
       },
     });
@@ -66,33 +54,15 @@ const Login: NextPage = () => {
         <meta name="description" content="ログイン画面" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-
-      <div className="min-w-screen min-h-screen px-8 py-16 bg-gray-100 space-y-12">
-        <div className="text-center text-2xl text-gray-600 font-bold">
-          ログイン
-        </div>
-        <form
-          onSubmit={handleSubmit(onSubmit)}
-          className="max-w-lg bg-gray-200 py-12 rounded-2xl space-y-8 mx-auto"
-        >
-          <div className="space-y-4 w-80 mx-auto">
-            {fields.map((field) => (
-              <InputForm
-                key={field}
-                label={getLabel(field)}
-                type={field}
-                registers={register(field, { required: true })}
-                error={errors[field]}
-              />
-            ))}
-          </div>
-
-          <input
-            type="submit"
-            value="ログイン"
-            className="cursor-pointer bg-blue-300 rounded-md px-4 py-2 text-gray-600 font-bold text-md block mx-auto"
-          />
-        </form>
+      <div className="min-w-screen min-h-screen bg-gray-100">
+        <Main title="ログイン" isLarge={false}>
+          <Form
+            fields={fields}
+            submitValue="ログイン"
+            register={register}
+            onSubmit={handleSubmit(onSubmit)}
+          ></Form>
+        </Main>
         <div className="max-w-fit mx-auto cursor-pointer">
           <Link href="/signup">
             <a className="text-gray-600 hover:underline hover:text-gray-400">

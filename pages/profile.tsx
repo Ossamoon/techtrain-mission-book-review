@@ -3,21 +3,28 @@ import type { SubmitHandler } from "react-hook-form";
 
 import Head from "next/head";
 import toast from "react-hot-toast";
-import { useEffect, useRef } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useCookies } from "react-cookie";
 import { getUser, putUser } from "../lib/fetch";
-import { InputForm } from "../components/inputForm";
 import { Header } from "../components/header";
 import { Footer } from "../components/footer";
+import { Form } from "../components/form";
+import { Main } from "../components/main";
 
 export type Input = {
   name: string;
 };
+const fields = [{ name: "name", label: "名前", type: "text" }];
+
+type FetchState =
+  | { state: "loading" }
+  | { state: "success" }
+  | { state: "error"; message: string };
 
 const Profile: NextPage = () => {
+  const [fetchState, setState] = useState<FetchState>({ state: "loading" });
   const [cookies] = useCookies(["token"]);
-
   const { register, handleSubmit, setValue } = useForm<Input>();
 
   const onSubmit: SubmitHandler<Input> = async (data) => {
@@ -41,9 +48,10 @@ const Profile: NextPage = () => {
     getUser(cookies.token)
       .then((data) => {
         setValue("name", data.name);
+        setState({ state: "success" });
       })
       .catch((err: Error) => {
-        console.error(err);
+        setState({ state: "error", message: err.message });
       });
   }, []);
 
@@ -55,32 +63,22 @@ const Profile: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <div className="min-w-screen min-h-screen bg-gray-100 space-y-16">
+      <div className="min-w-screen min-h-screen bg-gray-100">
         <Header />
-        <main className="space-y-16 px-8">
-          <div className="text-center text-2xl text-gray-600 font-bold">
-            プロフィール設定
-          </div>
-          <form
-            onSubmit={handleSubmit(onSubmit)}
-            className="max-w-lg bg-gray-200 py-12 rounded-2xl space-y-8 mx-auto"
-          >
-            <div className="space-y-4 w-80 mx-auto">
-              <InputForm
-                key="name"
-                label="名前"
-                type="text"
-                registers={register("name", { required: true })}
-              />
-            </div>
-
-            <input
-              type="submit"
-              value="適用"
-              className="cursor-pointer bg-blue-300 rounded-md px-4 py-2 text-gray-600 font-bold text-md block mx-auto"
-            />
-          </form>
-        </main>
+        <Main title="プロフィール設定" isLarge={false}>
+          {fetchState.state === "loading" ? (
+            "Loading..."
+          ) : fetchState.state === "error" ? (
+            fetchState.message
+          ) : (
+            <Form
+              fields={fields}
+              submitValue="適用"
+              register={register}
+              onSubmit={handleSubmit(onSubmit)}
+            ></Form>
+          )}
+        </Main>
         <Footer />
       </div>
     </>

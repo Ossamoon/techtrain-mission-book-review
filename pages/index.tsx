@@ -8,19 +8,12 @@ import { useCookies } from "react-cookie";
 import { getBooks } from "../lib/fetch";
 import { Header } from "../components/header";
 import { Footer } from "../components/footer";
-import { title } from "process";
+import { Main } from "../components/main";
 
 type DataState =
   | { state: "success"; data: BookData[] }
   | { state: "error"; message: string }
   | { state: "loading" };
-
-const fields = [
-  { name: "title", label: "タイトル", type: "text" },
-  { name: "title", label: "タイトル", type: "text" },
-  { name: "title", label: "タイトル", type: "text" },
-  { name: "title", label: "タイトル", type: "text" },
-];
 
 const Home: NextPage = () => {
   const [dataWithState, setDataWithState] = useState<DataState>({
@@ -52,49 +45,38 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <div className="min-w-screen min-h-screen bg-gray-100 space-y-16">
+      <div className="min-w-screen min-h-screen bg-gray-100">
         <Header />
-        <main className="space-y-16 px-8">
-          <h1 className="text-2xl text-gray-600 font-bold max-w-fit mx-auto">
-            {dataWithState.state === "loading"
-              ? "Loading..."
-              : dataWithState.state === "error"
-              ? "エラー"
-              : "Reactで作る書籍レビューアプリ"}
-          </h1>
-          <div className="max-w-4xl bg-gray-200 p-8 rounded-2xl space-y-4 mx-auto">
-            <Link href="/new">
-              <div className="cursor-pointer bg-blue-300 rounded-md px-4 py-2 shadow w-fit ml-auto">
-                <a className="text-gray-600 font-bold text-md">
-                  レビューを投稿
-                </a>
-              </div>
-            </Link>
-            {dataWithState.state === "loading"
-              ? "Loading..."
-              : dataWithState.state === "error"
-              ? dataWithState.message
-              : dataWithState.data.map((book) => (
-                  <div key={book.id} className="relative">
-                    <Link href={`/detail/${book.id}`}>
-                      <div className="hover:bg-gray-100 px-4 py-2 rounded-lg cursor-pointer space-y-1 text-gray-800">
-                        <a className="font-bold block truncate pr-12">
-                          {book.title}
-                        </a>
-                        <div className="block truncate">{book.detail}</div>
-                      </div>
+        <Main title="Reactで作る書籍レビューアプリ" isLarge={true}>
+          <Link href="/new">
+            <div className="cursor-pointer bg-blue-300 rounded-md px-4 py-2 shadow w-fit ml-auto">
+              <a className="text-gray-600 font-bold text-md">レビューを投稿</a>
+            </div>
+          </Link>
+          {dataWithState.state === "loading"
+            ? "Loading..."
+            : dataWithState.state === "error"
+            ? dataWithState.message
+            : dataWithState.data.map((book) => (
+                <div key={book.id} className="relative">
+                  <Link href={`/detail/${book.id}`}>
+                    <div className="hover:bg-gray-100 px-4 py-2 rounded-lg cursor-pointer space-y-1 text-gray-800">
+                      <a className="font-bold block truncate pr-12">
+                        {book.title}
+                      </a>
+                      <div className="block truncate">{book.detail}</div>
+                    </div>
+                  </Link>
+                  {book.isMine ? (
+                    <Link href={`/edit/${book.id}`}>
+                      <a className="block bg-gray-500 absolute top-2 right-2 w-fit hover:shadow-md hover:bg-gray-600 cursor-pointer px-2 py-1 text-sm text-gray-200 rounded">
+                        編集
+                      </a>
                     </Link>
-                    {book.isMine ? (
-                      <Link href={`/edit/${book.id}`}>
-                        <a className="block bg-gray-500 absolute top-2 right-2 w-fit hover:shadow-md hover:bg-gray-600 cursor-pointer px-2 py-1 text-sm text-gray-200 rounded">
-                          編集
-                        </a>
-                      </Link>
-                    ) : null}
-                  </div>
-                ))}
-          </div>
-        </main>
+                  ) : null}
+                </div>
+              ))}
+        </Main>
         <Footer />
       </div>
     </>

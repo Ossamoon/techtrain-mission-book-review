@@ -9,7 +9,13 @@ import { useCookies } from "react-cookie";
 import { getBook, putBook } from "../../lib/fetch";
 import { Footer } from "../../components/footer";
 import { Header } from "../../components/header";
-import { InputForm } from "../../components/inputForm";
+import { Form } from "../../components/form";
+import { Main } from "../../components/main";
+
+type FetchState =
+  | { state: "loading" }
+  | { state: "success" }
+  | { state: "error"; message: string };
 
 type Input = {
   title: string;
@@ -17,18 +23,13 @@ type Input = {
   detail: string;
   review: string;
 };
-
-type FetchState =
-  | { state: "loading" }
-  | { state: "success" }
-  | { state: "error"; message: string };
-
+const fieldNames = ["title", "url", "detail", "review"] as const;
 const fields = [
   { name: "title", label: "タイトル", type: "text" },
   { name: "url", label: "URL", type: "url" },
   { name: "detail", label: "詳細", type: "text" },
   { name: "review", label: "レビュー", type: "text" },
-] as const;
+];
 
 const Edit: NextPage = () => {
   const [fetchState, setState] = useState<FetchState>({ state: "loading" });
@@ -44,8 +45,8 @@ const Edit: NextPage = () => {
     }
     getBook(cookies.token, id)
       .then((data) => {
-        for (const field of fields) {
-          setValue(field.name, data[field.name]);
+        for (const name of fieldNames) {
+          setValue(name, data[name]);
         }
         setState({ state: "success" });
       })
@@ -79,44 +80,22 @@ const Edit: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <div className="min-w-screen min-h-screen bg-gray-100 space-y-16">
+      <div className="min-w-screen min-h-screen bg-gray-100">
         <Header />
-        <main className="space-y-16">
-          <h1 className="text-2xl text-gray-600 font-bold max-w-fit mx-auto">
-            編集画面
-          </h1>
-          <div className="mx-8">
-            <div className="max-w-4xl bg-gray-200 p-8 rounded-2xl space-y-4 mx-auto">
-              {fetchState.state === "loading" ? (
-                "Loading..."
-              ) : fetchState.state === "error" ? (
-                fetchState.message
-              ) : (
-                <form
-                  onSubmit={handleSubmit(onSubmit)}
-                  className="max-w-lg bg-gray-200 py-12 rounded-2xl space-y-8 mx-auto"
-                >
-                  <div className="space-y-4 w-80 mx-auto">
-                    {fields.map((field) => (
-                      <InputForm
-                        key={field.name}
-                        label={field.label}
-                        type={field.type}
-                        registers={register(field.name, { required: true })}
-                      />
-                    ))}
-                  </div>
-
-                  <input
-                    type="submit"
-                    value="投稿"
-                    className="cursor-pointer bg-blue-300 rounded-md px-4 py-2 text-gray-600 font-bold text-md block mx-auto"
-                  />
-                </form>
-              )}
-            </div>
-          </div>
-        </main>
+        <Main title="書籍レビュー編集" isLarge={false}>
+          {fetchState.state === "loading" ? (
+            "Loading..."
+          ) : fetchState.state === "error" ? (
+            fetchState.message
+          ) : (
+            <Form
+              fields={fields}
+              submitValue="適用"
+              register={register}
+              onSubmit={handleSubmit(onSubmit)}
+            ></Form>
+          )}
+        </Main>
         <Footer />
       </div>
     </>
