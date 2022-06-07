@@ -16,7 +16,7 @@ export const Header: FC = () => {
 
   const logout = () => {
     removeCookie("token");
-    toast("ログアウトしました");
+    toast.success("ログアウトしました");
     router.push("/login");
     return;
   };

@@ -3,7 +3,6 @@ import type { SubmitHandler } from "react-hook-form";
 
 import Head from "next/head";
 import toast from "react-hot-toast";
-import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 import { useCookies } from "react-cookie";
 import { postBooks } from "../lib/fetch";
@@ -18,58 +17,30 @@ export type Input = {
   review: "string";
 };
 
-const getLabel = (item: keyof Input): string => {
-  switch (item) {
-    case "title":
-      return "タイトル";
-      break;
-    case "url":
-      return "URL";
-      break;
-    case "detail":
-      return "詳細";
-      break;
-    case "review":
-      return "レビュー";
-      break;
-  }
-};
+type DataState =
+  | {
+      state: "success";
+      data: Input;
+    }
+  | { state: "error"; message: string }
+  | { state: "loading" };
 
-const getType = (item: keyof Input): string => {
-  switch (item) {
-    case "title":
-      return "text";
-      break;
-    case "url":
-      return "url";
-      break;
-    case "detail":
-      return "text";
-      break;
-    case "review":
-      return "text";
-      break;
-  }
-};
+const fields = [
+  { name: "title", label: "タイトル", type: "text" },
+  { name: "url", label: "URL", type: "url" },
+  { name: "detail", label: "詳細", type: "text" },
+  { name: "review", label: "レビュー", type: "text" },
+] as const;
 
 const NewBook: NextPage = () => {
   const [cookies] = useCookies(["token"]);
 
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm<Input>();
-
-  const fields = ["title", "url", "detail", "review"] as const;
-
-  const router = useRouter();
+  const { register, handleSubmit, reset } = useForm<Input>();
 
   const onSubmit: SubmitHandler<Input> = async (data) => {
     toast.promise(postBooks(cookies.token, data), {
       loading: "Loading",
-      success: (res) => {
+      success: () => {
         reset;
         return `新しい書籍レビューを投稿しました`;
       },
@@ -101,11 +72,10 @@ const NewBook: NextPage = () => {
             <div className="space-y-4 w-80 mx-auto">
               {fields.map((field) => (
                 <InputForm
-                  key={field}
-                  label={getLabel(field)}
-                  type={getType(field)}
-                  registers={register(field, { required: true })}
-                  error={errors[field]}
+                  key={field.name}
+                  label={field.label}
+                  type={field.type}
+                  registers={register(field.name, { required: true })}
                 />
               ))}
             </div>

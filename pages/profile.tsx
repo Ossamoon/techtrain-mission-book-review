@@ -4,7 +4,6 @@ import type { SubmitHandler } from "react-hook-form";
 import Head from "next/head";
 import toast from "react-hot-toast";
 import { useEffect, useRef } from "react";
-import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 import { useCookies } from "react-cookie";
 import { getUser, putUser } from "../lib/fetch";
@@ -19,16 +18,7 @@ export type Input = {
 const Profile: NextPage = () => {
   const [cookies] = useCookies(["token"]);
 
-  const initUserName = useRef<string>("");
-
-  const router = useRouter();
-
-  const {
-    register,
-    handleSubmit,
-    setValue,
-    formState: { errors },
-  } = useForm<Input>();
+  const { register, handleSubmit, setValue } = useForm<Input>();
 
   const onSubmit: SubmitHandler<Input> = async (data) => {
     toast.promise(putUser(cookies.token, data), {
@@ -44,15 +34,12 @@ const Profile: NextPage = () => {
   };
 
   useEffect(() => {
-    // Redirect if viewer do not have token
-    if (!cookies.token) {
-      router.replace("/login");
+    if (typeof cookies.token !== "string") {
       return;
     }
     // Get user name
     getUser(cookies.token)
       .then((data) => {
-        initUserName.current = data.name;
         setValue("name", data.name);
       })
       .catch((err: Error) => {
@@ -84,7 +71,6 @@ const Profile: NextPage = () => {
                 label="名前"
                 type="text"
                 registers={register("name", { required: true })}
-                error={errors.name}
               />
             </div>
 

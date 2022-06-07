@@ -8,11 +8,19 @@ import { useCookies } from "react-cookie";
 import { getBooks } from "../lib/fetch";
 import { Header } from "../components/header";
 import { Footer } from "../components/footer";
+import { title } from "process";
 
 type DataState =
   | { state: "success"; data: BookData[] }
   | { state: "error"; message: string }
   | { state: "loading" };
+
+const fields = [
+  { name: "title", label: "タイトル", type: "text" },
+  { name: "title", label: "タイトル", type: "text" },
+  { name: "title", label: "タイトル", type: "text" },
+  { name: "title", label: "タイトル", type: "text" },
+];
 
 const Home: NextPage = () => {
   const [dataWithState, setDataWithState] = useState<DataState>({
@@ -67,11 +75,23 @@ const Home: NextPage = () => {
               : dataWithState.state === "error"
               ? dataWithState.message
               : dataWithState.data.map((book) => (
-                  <Link key={book.id} href={`/detail/${book.id}`}>
-                    <a className="hover:bg-gray-100 px-4 py-2 rounded-lg cursor-pointer block">
-                      {book.title} {book.detail}
-                    </a>
-                  </Link>
+                  <div key={book.id} className="relative">
+                    <Link href={`/detail/${book.id}`}>
+                      <div className="hover:bg-gray-100 px-4 py-2 rounded-lg cursor-pointer space-y-1 text-gray-800">
+                        <a className="font-bold block truncate pr-12">
+                          {book.title}
+                        </a>
+                        <div className="block truncate">{book.detail}</div>
+                      </div>
+                    </Link>
+                    {book.isMine ? (
+                      <Link href={`/edit/${book.id}`}>
+                        <a className="block bg-gray-500 absolute top-2 right-2 w-fit hover:shadow-md hover:bg-gray-600 cursor-pointer px-2 py-1 text-sm text-gray-200 rounded">
+                          編集
+                        </a>
+                      </Link>
+                    ) : null}
+                  </div>
                 ))}
           </div>
         </main>

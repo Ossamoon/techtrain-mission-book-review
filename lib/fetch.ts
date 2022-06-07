@@ -284,3 +284,85 @@ export const getBook: GetBook = async (token, id) => {
   }
   throw new Error("情報の取得に失敗しました");
 };
+
+//
+// * Put Book with ID (with Authentication)
+// [PUT] `/books/{id}`
+//
+
+export type PutBook = (
+  token: string,
+  id: string,
+  data: { title: string; url: string; detail: string; review: string }
+) => Promise<BookData>;
+
+export const putBook: PutBook = async (token, id, data) => {
+  const url = base_url + "/books/" + id;
+
+  const response = await fetch(url, {
+    method: "PUT",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+  const obj = await response.json();
+
+  // Success
+  if (response.ok) {
+    return obj;
+  }
+  // Error
+  console.error(obj);
+  if (response.status === 400) {
+    throw new Error("有効でない値を検出しました");
+  }
+  if (response.status === 401) {
+    throw new Error("認証エラーが発生しました");
+  }
+  if (response.status === 404) {
+    throw new Error("書籍レビューが存在しません");
+  }
+  if (response.status === 500) {
+    throw new Error("サーバーでエラーが発生しました");
+  }
+  throw new Error("情報の更新に失敗しました");
+};
+
+//
+// * Delete Book with ID (with Authentication)
+// [DELETE] `/books/{id}`
+//
+
+export type DeleteBook = (token: string, id: string) => Promise<void>;
+
+export const deleteBook: DeleteBook = async (token, id) => {
+  const url = base_url + "/books/" + id;
+
+  const response = await fetch(url, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+  });
+  const obj = await response.json();
+
+  // Success
+  if (response.ok) {
+    return;
+  }
+  // Error
+  console.error(obj);
+  if (response.status === 401) {
+    throw new Error("認証エラーが発生しました");
+  }
+  if (response.status === 404) {
+    throw new Error("書籍レビューが存在しません");
+  }
+  if (response.status === 500) {
+    throw new Error("サーバーでエラーが発生しました");
+  }
+  throw new Error("書籍レビューを削除できませんでした");
+};
