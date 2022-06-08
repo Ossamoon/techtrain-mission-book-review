@@ -27,8 +27,8 @@ type Input = {
 const fields: FieldData<Input>[] = [
   { name: "title", label: "タイトル", type: "text" },
   { name: "url", label: "URL", type: "url" },
-  { name: "detail", label: "詳細", type: "text" },
-  { name: "review", label: "レビュー", type: "text" },
+  { name: "detail", label: "詳細", type: "textarea" },
+  { name: "review", label: "レビュー", type: "textarea" },
 ];
 
 const Edit: NextPage = () => {
