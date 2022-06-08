@@ -10,6 +10,7 @@ import { Header } from "../components/header";
 import { Footer } from "../components/footer";
 import { type FieldData, Form } from "../components/form";
 import { Main } from "../components/main";
+import { useRouter } from "next/router";
 
 type Input = {
   title: "string";
@@ -27,14 +28,14 @@ const fields: FieldData<Input>[] = [
 
 const NewBook: NextPage = () => {
   const [cookies] = useCookies(["token"]);
-
+  const router = useRouter();
   const { register, handleSubmit, reset } = useForm<Input>();
 
   const onSubmit: SubmitHandler<Input> = async (data) => {
     toast.promise(postBooks(cookies.token, data), {
       loading: "Loading",
       success: () => {
-        reset;
+        router.push("/");
         return `新しい書籍レビューを投稿しました`;
       },
       error: (err: Error) => {
