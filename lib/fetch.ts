@@ -8,12 +8,6 @@ export type BookData = {
   isMine: boolean;
 };
 
-export type ErrorMessage = {
-  ErrorCode: number;
-  ErrorMessageJP: string;
-  ErrorMessageEN: string;
-};
-
 const base_url = "https://api-for-missions-and-railways.herokuapp.com";
 
 //
@@ -229,14 +223,12 @@ export const postBooks: PostBooks = async (token, data) => {
     },
     body: JSON.stringify(data),
   });
-  const obj = await response.json();
 
   // Success
   if (response.ok) {
     return;
   }
   // Error
-  console.error(obj);
   if (response.status === 400) {
     throw new Error("有効でない値を検出しました");
   }
