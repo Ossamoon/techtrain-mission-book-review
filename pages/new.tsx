@@ -8,16 +8,17 @@ import { useCookies } from "react-cookie";
 import { postBooks } from "../lib/fetch";
 import { Header } from "../components/header";
 import { Footer } from "../components/footer";
-import { Form } from "../components/form";
+import { type FieldData, Form } from "../components/form";
 import { Main } from "../components/main";
 
-export type Input = {
+type Input = {
   title: "string";
   url: "string";
   detail: "string";
   review: "string";
 };
-const fields = [
+
+const fields: FieldData<Input>[] = [
   { name: "title", label: "タイトル", type: "text" },
   { name: "url", label: "URL", type: "url" },
   { name: "detail", label: "詳細", type: "text" },

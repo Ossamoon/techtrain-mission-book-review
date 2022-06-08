@@ -1,15 +1,18 @@
 import type { FC, FormEventHandler } from "react";
 import type { UseFormRegister } from "react-hook-form";
 
+export type FieldData<T> = {
+  name: string & keyof T;
+  label: string;
+  type: string;
+};
+
+// ここのanyを解消したい！！！！
 type Props = {
-  fields: {
-    name: string;
-    label: string;
-    type: string;
-  }[];
+  fields: FieldData<any>[];
   submitValue: string;
   onSubmit: FormEventHandler<HTMLFormElement>;
-  register: UseFormRegister<any>; // ここ何とかならんものか
+  register: UseFormRegister<any>;
 };
 
 export const Form: FC<Props> = ({
@@ -25,9 +28,10 @@ export const Form: FC<Props> = ({
           <label key={field.name} className="block">
             <div className="font-bold text-sm text-gray-600">{field.label}</div>
             <input
-              {...register(field.name, { required: true })}
+              {...register(field.name)}
               type={field.type}
               className="w-full px-1 py-1 rounded text-gray-800"
+              required
             />
           </label>
         ))}

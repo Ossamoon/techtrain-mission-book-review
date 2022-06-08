@@ -8,16 +8,17 @@ import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 import { useCookies } from "react-cookie";
 import { createUser } from "../lib/fetch";
-import { Form } from "../components/form";
+import { type FieldData, Form } from "../components/form";
 import { Main } from "../components/main";
 
-export type Input = {
+type Input = {
   name: string;
   email: string;
   password: string;
   re_password: string;
 };
-const fields = [
+
+const fields: FieldData<Input>[] = [
   { name: "name", label: "名前", type: "text" },
   { name: "email", label: "メールアドレス", type: "email" },
   { name: "password", label: "パスワード", type: "password" },

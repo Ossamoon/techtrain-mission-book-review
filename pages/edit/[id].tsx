@@ -9,7 +9,7 @@ import { useCookies } from "react-cookie";
 import { getBook, putBook } from "../../lib/fetch";
 import { Footer } from "../../components/footer";
 import { Header } from "../../components/header";
-import { Form } from "../../components/form";
+import { type FieldData, Form } from "../../components/form";
 import { Main } from "../../components/main";
 
 type FetchState =
@@ -23,8 +23,8 @@ type Input = {
   detail: string;
   review: string;
 };
-const fieldNames = ["title", "url", "detail", "review"] as const;
-const fields = [
+
+const fields: FieldData<Input>[] = [
   { name: "title", label: "タイトル", type: "text" },
   { name: "url", label: "URL", type: "url" },
   { name: "detail", label: "詳細", type: "text" },
@@ -45,8 +45,8 @@ const Edit: NextPage = () => {
     }
     getBook(cookies.token, id)
       .then((data) => {
-        for (const name of fieldNames) {
-          setValue(name, data[name]);
+        for (const field of fields) {
+          setValue(field.name, data[field.name]);
         }
         setState({ state: "success" });
       })

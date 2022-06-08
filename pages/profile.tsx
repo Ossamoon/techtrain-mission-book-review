@@ -9,13 +9,16 @@ import { useCookies } from "react-cookie";
 import { getUser, putUser } from "../lib/fetch";
 import { Header } from "../components/header";
 import { Footer } from "../components/footer";
-import { Form } from "../components/form";
+import { type FieldData, Form } from "../components/form";
 import { Main } from "../components/main";
 
-export type Input = {
+type Input = {
   name: string;
 };
-const fields = [{ name: "name", label: "名前", type: "text" }];
+
+const fields: FieldData<Input>[] = [
+  { name: "name", label: "名前", type: "text" },
+];
 
 type FetchState =
   | { state: "loading" }
