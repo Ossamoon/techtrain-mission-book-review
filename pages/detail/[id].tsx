@@ -46,23 +46,38 @@ const Detail: NextPage = () => {
 
       <div className="min-w-screen min-h-screen bg-gray-100">
         <Header />
-        <Main
-          title={
-            dataWithState.state === "success" ? dataWithState.data?.title : ""
-          }
-          isLarge={true}
-        >
+        <Main title="詳細画面" isLarge={true}>
           {dataWithState.state === "loading" ? (
             "Loading..."
           ) : dataWithState.state === "error" ? (
             dataWithState.message
           ) : (
             <>
-              <div>{dataWithState.data.detail}</div>
-              <div>{dataWithState.data.url}</div>
-              <div>{dataWithState.data.review}</div>
-              <div>{dataWithState.data.reviewer}</div>
-              <div>{dataWithState.data.isMine}</div>
+              <div className="text-gray-800">
+                <h2 className="text-gray-600 font-bold">タイトル</h2>
+                {dataWithState.data.title}
+              </div>
+              <div className="text-gray-800">
+                <h2 className="text-gray-600 font-bold">詳細</h2>
+                {dataWithState.data.detail}
+              </div>
+              <div className="text-gray-800">
+                <h2 className="text-gray-600 font-bold">URL</h2>
+                <a
+                  className="text-blue-600 hover:underline hover:text-blue-400"
+                  href={dataWithState.data.url}
+                >
+                  {dataWithState.data.url}
+                </a>
+              </div>
+              <div className="text-gray-800">
+                <h2 className="text-gray-600 font-bold">レビュー</h2>
+                {dataWithState.data.review}
+              </div>
+              <div className="text-gray-800">
+                <h2 className="text-gray-600 font-bold">投稿者</h2>
+                {dataWithState.data.reviewer}
+              </div>
             </>
           )}
         </Main>

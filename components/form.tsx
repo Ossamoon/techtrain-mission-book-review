@@ -27,12 +27,20 @@ export const Form: FC<Props> = ({
         {fields.map((field) => (
           <label key={field.name} className="block">
             <div className="font-bold text-sm text-gray-600">{field.label}</div>
-            <input
-              {...register(field.name)}
-              type={field.type}
-              className="w-full px-1 py-1 rounded text-gray-800"
-              required
-            />
+            {field.type === "textarea" ? (
+              <textarea
+                {...register(field.name)}
+                className="w-full h-20 px-1 py-1 rounded text-gray-800"
+                required
+              />
+            ) : (
+              <input
+                {...register(field.name)}
+                type={field.type}
+                className="w-full px-1 py-1 rounded text-gray-800"
+                required
+              />
+            )}
           </label>
         ))}
       </div>
