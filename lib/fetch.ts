@@ -28,6 +28,8 @@ export const signIn: SignIn = async (data) => {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(data),
+  }).catch(() => {
+    throw new Error("ネットワークに接続できませんでした");
   });
   const obj = await response.json();
 
@@ -69,6 +71,8 @@ export const createUser: CreateUser = async (data) => {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(data),
+  }).catch(() => {
+    throw new Error("ネットワークに接続できませんでした");
   });
   const obj = await response.json();
 
@@ -103,6 +107,8 @@ export const getUser: GetUser = async (token) => {
     headers: {
       Authorization: `Bearer ${token}`,
     },
+  }).catch(() => {
+    throw new Error("ネットワークに接続できませんでした");
   });
   const obj = await response.json();
 
@@ -141,6 +147,8 @@ export const putUser: PutUser = async (token, data) => {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(data),
+  }).catch(() => {
+    throw new Error("ネットワークに接続できませんでした");
   });
   const obj = await response.json();
 
@@ -180,6 +188,8 @@ export const getBooks: GetBooks = async (token, offset) => {
     headers: {
       Authorization: `Bearer ${token}`,
     },
+  }).catch(() => {
+    throw new Error("ネットワークに接続できませんでした");
   });
   const obj = await response.json();
 
@@ -222,6 +232,8 @@ export const postBooks: PostBooks = async (token, data) => {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(data),
+  }).catch(() => {
+    throw new Error("ネットワークに接続できませんでした");
   });
 
   // Success
@@ -256,6 +268,8 @@ export const getBook: GetBook = async (token, id) => {
     headers: {
       Authorization: `Bearer ${token}`,
     },
+  }).catch(() => {
+    throw new Error("ネットワークに接続できませんでした");
   });
   const obj = await response.json();
 
@@ -298,6 +312,8 @@ export const putBook: PutBook = async (token, id, data) => {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(data),
+  }).catch(() => {
+    throw new Error("ネットワークに接続できませんでした");
   });
   const obj = await response.json();
 
@@ -337,6 +353,8 @@ export const deleteBook: DeleteBook = async (token, id) => {
     headers: {
       Authorization: `Bearer ${token}`,
     },
+  }).catch(() => {
+    throw new Error("ネットワークに接続できませんでした");
   });
 
   // Success
