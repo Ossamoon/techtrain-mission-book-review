@@ -2,11 +2,11 @@ import type { NextPage, GetServerSideProps } from "next";
 
 import Head from "next/head";
 import toast from "react-hot-toast";
-import { useEffect, useState } from "react";
+import { MouseEventHandler, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { useCookies } from "react-cookie";
-import { getBook, putBook } from "../../lib/fetch";
+import { getBook, putBook, deleteBook } from "../../lib/fetch";
 import { Footer } from "../../components/footer";
 import { Header } from "../../components/header";
 import { type FieldData, Form } from "../../components/form";
@@ -55,20 +55,33 @@ const Edit: NextPage = () => {
       });
   }, []);
 
+  const onClickDeleteButton: MouseEventHandler<HTMLButtonElement> = () => {
+    // Delete book data
+    const { id } = router.query;
+    if (typeof id !== "string" || typeof cookies.token !== "string") {
+      return;
+    }
+    toast.promise(deleteBook(cookies.token, id), {
+      loading: "Loading...",
+      success: () => {
+        router.push("/");
+        return "レビューを削除しました";
+      },
+      error: (err: Error) => err.message,
+    });
+  };
+
   const onSubmit: SubmitHandler<Input> = async (data) => {
     const { id } = router.query;
     if (typeof id !== "string") {
       return;
     }
     toast.promise(putBook(cookies.token, id, data), {
-      loading: "Loading",
+      loading: "Loading...",
       success: () => {
         return `書籍レビューの変更を適用しました`;
       },
-      error: (err: Error) => {
-        console.error(err);
-        return err.message;
-      },
+      error: (err: Error) => err.message,
     });
   };
 
@@ -88,12 +101,20 @@ const Edit: NextPage = () => {
           ) : fetchState.state === "error" ? (
             fetchState.message
           ) : (
-            <Form
-              fields={fields}
-              submitValue="適用"
-              register={register}
-              onSubmit={handleSubmit(onSubmit)}
-            ></Form>
+            <>
+              <button
+                className="block cursor-pointer bg-red-300 text-gray-600 font-bold text-sm rounded-md px-2 py-1 w-fit ml-auto"
+                onClick={onClickDeleteButton}
+              >
+                レビューを削除
+              </button>
+              <Form
+                fields={fields}
+                submitValue="適用"
+                register={register}
+                onSubmit={handleSubmit(onSubmit)}
+              ></Form>
+            </>
           )}
         </Main>
         <Footer />

@@ -344,17 +344,14 @@ export const deleteBook: DeleteBook = async (token, id) => {
     method: "DELETE",
     headers: {
       Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
     },
   });
-  const obj = await response.json();
 
   // Success
   if (response.ok) {
     return;
   }
   // Error
-  console.error(obj);
   if (response.status === 401) {
     throw new Error("認証エラーが発生しました");
   }
